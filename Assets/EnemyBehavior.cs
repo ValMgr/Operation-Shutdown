@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnemyBehavior : MonoBehaviour
 {
 
-    public int EnemyType = 0; // 0 = Standart behavior (Moving randomly right and left) - 1 = Static
+    public int EnemyType = 0; // 0 = Standart behavior (Moving randomly right and left) - 1 = Static - 2 = static but looking to right and left
 
     public Rigidbody2D rb2d;
     public SpriteRenderer m_spriteRenderer;
@@ -24,12 +24,15 @@ public class EnemyBehavior : MonoBehaviour
     private Vector3 StartingPos;
     private float distance_from_origin = 0f;
     private Rigidbody2D rb;
-    float Moovetimer = 0.6f;
+    float Moovetimer = 0.7f;
+
+    private int ActualStep = 0;
 
     void Start() {
         StartingPosX = transform.position.x;
         StartingPos = new Vector3(StartingPosX, transform.position.y, transform.position.z);
         rb = GetComponent<Rigidbody2D>();
+
 
         
     }
@@ -51,40 +54,53 @@ public class EnemyBehavior : MonoBehaviour
         distance = Vector3.Distance(transform.position, Target.transform.position);
         //Debug.Log(Target.transform.position.x);
         
+        
         distance_from_origin = Vector3.Distance(transform.position, StartingPos);
         
         if(EnemyType == 0){
-
-
-
             if(distance_from_origin < 500f){
 
                 
                 Moovetimer = Moovetimer - Time.deltaTime;
+                
 
                 if(Moovetimer < 0f){
 
-                    int random = Random.Range(0, 10);
+                    int random = Random.Range(0, 12);
+                    
 
                     //if random = 1, 2, 3
-                    if(random > 0 && random < 4){
+                    if(ActualStep > 0 && ActualStep < 4){
                         m_direction = "right";
                         rb.velocity = new Vector2(speed, rb.velocity.y);
                     }
                     //if random = 4, 5, 6
-                    if(random > 3 && random < 7){
+                    if(ActualStep > 3 && ActualStep < 7){
                         m_direction = "left";
                         rb.velocity = new Vector2(- speed, rb.velocity.y);
                     }
-                    //if random = 7, 8, 9, 10,
+                    //if random = 7, 8, 9, 10 and more
                     // Nothing because he's not mooving
                 
-                    Moovetimer = 0.6f; //restart timer
+                    if(IsBetween(ActualStep, 0, 3) && IsBetween(random, 0, 3)){
+                        Moovetimer = 0.1f;
+                    }
+                    if(IsBetween(ActualStep, 4, 6) && IsBetween(random, 4, 6)){
+                        Moovetimer = 0.1f;
+                    }
+                    if(IsBetween(ActualStep, 7, 12) && IsBetween(random, 7, 12)){
+                        Moovetimer = 0.7f;
+                    }
+
+                      ActualStep = random;  
 
                 }
             }
         }
 
+
+        // Switching direction to look the player when he is too close
+        //  /!\ Not definitif /!\
         if(distance < 800f && m_direction == "right"){
             if(Target.transform.position.x < transform.position.x){
                 m_direction = "left";
@@ -101,6 +117,11 @@ public class EnemyBehavior : MonoBehaviour
 
         SpriteDirection();
         Shoot();
+    }
+
+    // Method to check if a number is inside an interval or not
+    static bool IsBetween(int Nbr, int start, int end){
+        return Comparer.Default.Compare(Nbr, start) >= 0 && Comparer.Default.Compare(Nbr, end) <= 0;
     }
 
 
