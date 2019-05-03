@@ -18,13 +18,14 @@ public class EnemyBehavior : MonoBehaviour
     public GameObject Target;
     public GameObject m_ball;
     private float Firedelay = 0f;
+    private bool IsShooting = false;
     float distance = 0f;
 
     private float StartingPosX;
     private Vector3 StartingPos;
     private float distance_from_origin = 0f;
     private Rigidbody2D rb;
-    float Moovetimer = 0.7f;
+    float Moovetimer = 1.3f;
 
     private int ActualStep = 0;
 
@@ -58,60 +59,52 @@ public class EnemyBehavior : MonoBehaviour
         distance_from_origin = Vector3.Distance(transform.position, StartingPos);
         
         if(EnemyType == 0){
-            if(distance_from_origin < 500f){
+            if(IsShooting == false){
+                if(distance_from_origin < 500f){
 
-                
-                Moovetimer = Moovetimer - Time.deltaTime;
-                
-
-                if(Moovetimer < 0f){
-
-                    int random = Random.Range(0, 12);
+                    
+                    Moovetimer = Moovetimer - Time.deltaTime;
                     
 
-                    //if random = 1, 2, 3
-                    if(ActualStep > 0 && ActualStep < 4){
-                        m_direction = "right";
-                        rb.velocity = new Vector2(speed, rb.velocity.y);
-                    }
-                    //if random = 4, 5, 6
-                    if(ActualStep > 3 && ActualStep < 7){
-                        m_direction = "left";
-                        rb.velocity = new Vector2(- speed, rb.velocity.y);
-                    }
-                    //if random = 7, 8, 9, 10 and more
-                    // Nothing because he's not mooving
-                
-                    if(IsBetween(ActualStep, 0, 3) && IsBetween(random, 0, 3)){
-                        Moovetimer = 0.1f;
-                    }
-                    if(IsBetween(ActualStep, 4, 6) && IsBetween(random, 4, 6)){
-                        Moovetimer = 0.1f;
-                    }
-                    if(IsBetween(ActualStep, 7, 12) && IsBetween(random, 7, 12)){
-                        Moovetimer = 0.7f;
-                    }
+                    if(Moovetimer < 0f){
 
-                      ActualStep = random;  
+                        int random = Random.Range(0, 12);
+                        
 
+                        //if random = 1, 2, 3
+                        if(ActualStep > 0 && ActualStep < 4){
+                            m_direction = "right";
+                            rb.velocity = new Vector2(speed, rb.velocity.y);
+                        }
+                        //if random = 4, 5, 6
+                        if(ActualStep > 3 && ActualStep < 7){
+                            m_direction = "left";
+                            rb.velocity = new Vector2(- speed, rb.velocity.y);
+                        }
+                        //if random = 7, 8, 9, 10 and more
+                        // Nothing because he's not mooving
+                    
+                        if(IsBetween(ActualStep, 0, 3) && IsBetween(random, 0, 3)){
+                            Moovetimer = 0.1f;
+                        }
+                        if(IsBetween(ActualStep, 4, 6) && IsBetween(random, 4, 6)){
+                            Moovetimer = 0.1f;
+                        }
+                        if(IsBetween(ActualStep, 7, 12) && IsBetween(random, 7, 12)){
+                            Moovetimer = 0.1f;
+                        }
+                        else{
+                            Moovetimer = 1.3f;
+                        }
+
+                        ActualStep = random;  
+
+                    }
                 }
             }
         }
 
 
-        // Switching direction to look the player when he is too close
-        //  /!\ Not definitif /!\
-        if(distance < 800f && m_direction == "right"){
-            if(Target.transform.position.x < transform.position.x){
-                m_direction = "left";
-                
-            }
-        }
-        if(distance < 800f && m_direction == "left"){
-            if(Target.transform.position.x > transform.position.x){
-                m_direction = "right";
-            }
-        }
 
 
 
@@ -135,7 +128,7 @@ public class EnemyBehavior : MonoBehaviour
         }
     }
 
-    private void Shoot(){
+    /*private void Shoot(){
 
         if(Firedelay == 0f && distance < 800f){
                
@@ -145,14 +138,47 @@ public class EnemyBehavior : MonoBehaviour
                 if(Target.transform.position.x > 0){
                     BallBehavior.Launch(new Vector2(- Target.transform.position.x, Target.transform.position.y));
                 }
-                else{
-                    BallBehavior.Launch(new Vector2(Target.transform.position.x, Target.transform.position.y));
+                if(Target.transform.position.x < 0){
+                   BallBehavior.Launch(new Vector2(Target.transform.position.x, Target.transform.position.y));
                 }
                 Firedelay = 0.8f; // delay between 2 shots
             }
 
-    }
+    }*/
 
+    private void Shoot(){
+
+        
+        
+        if(distance < 800f){
+
+            if(Firedelay == 0f){
+
+
+                if(Target.transform.position.x < transform.position.x && m_direction == "left"){
+                    
+                        GameObject newBall = Instantiate(m_ball, this.transform.position, Quaternion.identity) as GameObject;
+                        EnemyBulletBehavior BallBehavior = newBall.GetComponent<EnemyBulletBehavior>();
+
+                        BallBehavior.Launch(new Vector2(-1f, 0f)); // Fire to the Left
+                        Firedelay = 0.8f; // delay between 2 shots
+                        
+                }
+
+                if(Target.transform.position.x > transform.position.x && m_direction == "right"){
+
+                        GameObject newBall = Instantiate(m_ball, this.transform.position, Quaternion.identity) as GameObject;
+                        EnemyBulletBehavior BallBehavior = newBall.GetComponent<EnemyBulletBehavior>();
+
+                        BallBehavior.Launch(new Vector2(1f, 0f)); // Fire to the right
+                        Firedelay = 0.8f; // delay between 2 shots
+                        
+                }
+
+        }
+
+    }
+}
 
 
 }

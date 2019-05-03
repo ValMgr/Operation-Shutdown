@@ -7901,7 +7901,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!50 &262032357433812266
 Rigidbody2D:
   serializedVersion: 4
@@ -7940,7 +7940,7 @@ MonoBehaviour:
   m_spriteRenderer: {fileID: 262032357433812261}
   speed: 200
   m_direction: right
-  Target: {fileID: 0}
+  Target: {fileID: 1718765103}
   m_ball: {fileID: 7528357761886316364, guid: 192e9073c571aa34d9c1089604650f1c, type: 3}
 --- !u!1001 &7575081382307877891
 PrefabInstance:
