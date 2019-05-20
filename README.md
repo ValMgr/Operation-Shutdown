@@ -1,5 +1,6 @@
 # Operation-Shutdown
 
+MMI University Project
 Video Game made by:
  - Valentin Magry - Dev
  - Valentin Salaud - Graphism
